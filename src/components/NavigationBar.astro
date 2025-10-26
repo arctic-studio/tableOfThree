@@ -2,7 +2,7 @@
 // NavigationBar.astro
 ---
 
-<nav class="bg-custom shadow-lg sticky top-0 z-50">
+<nav class="bg-custom-500 shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
@@ -39,7 +39,7 @@
     
     <!-- Mobile menu -->
     <div class="md:hidden mobile-menu hidden" id="mobile-menu">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gradient-to-r from-indigo-700 to-purple-700">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-custom-400">
             <a href="#home" class="text-white hover:text-gray-200 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Home</a>
             <a href="#about" class="text-white hover:text-gray-200 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">About</a>
             <a href="#services" class="text-white hover:text-gray-200 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Services</a>
@@ -64,11 +64,11 @@
                 mobileMenu.classList.toggle('hidden');
                 
                 // Toggle aria-expanded
-                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                mobileMenuButton.setAttribute('aria-expanded', String(!isExpanded));
                 
                 // Toggle icons
-                hamburgerIcon.classList.toggle('hidden');
-                closeIcon.classList.toggle('hidden');
+                hamburgerIcon?.classList.toggle('hidden');
+                closeIcon?.classList.toggle('hidden');
             });
             
             // Close mobile menu when clicking on a link
@@ -77,18 +77,18 @@
                 link.addEventListener('click', function() {
                     mobileMenu.classList.add('hidden');
                     mobileMenuButton.setAttribute('aria-expanded', 'false');
-                    hamburgerIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
+                    hamburgerIcon?.classList.remove('hidden');
+                    closeIcon?.classList.add('hidden');
                 });
             });
             
             // Close mobile menu when clicking outside
             document.addEventListener('click', function(event) {
-                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                if (!mobileMenuButton.contains(event.target as Node) && !mobileMenu.contains(event.target as Node)) {
                     mobileMenu.classList.add('hidden');
                     mobileMenuButton.setAttribute('aria-expanded', 'false');
-                    hamburgerIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
+                    hamburgerIcon?.classList.remove('hidden');
+                    closeIcon?.classList.add('hidden');
                 }
             });
         }
