@@ -1,7 +1,6 @@
 ---
 import NavigationBar from '../components/NavigationBar.astro';
 import Layout from '../layouts/Layout.astro';
-import '../styles/global.css';
 ---
 
 <Layout>
@@ -228,96 +227,10 @@ import '../styles/global.css';
 					<span class="footer-brand">Table of Three</span>
 				</div>
 				<div class="footer-text">
-					<p>&copy; 2024 Table of Three. All rights reserved.</p>
+					<p>&copy;2025 Table of Three. All rights reserved.</p>
 					<p>Crafting exceptional culinary experiences, one event at a time.</p>
 				</div>
 			</div>
 		</div>
 	</footer>
 </Layout>
-
-<script>
-  // Scroll-triggered animations
-  document.addEventListener('DOMContentLoaded', function() {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver(function(entries) {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, observerOptions);
-
-    // Add fade-in class to elements that should animate on scroll
-    const animateElements = document.querySelectorAll('.section-header, .about-text, .about-stats, .service-card, .contact-info, .contact-form');
-    animateElements.forEach(el => {
-      el.classList.add('fade-in');
-      observer.observe(el);
-    });
-
-    // Form submission handling
-    const form = document.querySelector('.form') as HTMLFormElement | null;
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        
-        // Simple validation
-        if (!data.name || !data.email || !data.service) {
-          alert('Please fill in all required fields.');
-          return;
-        }
-        
-        // Simulate form submission
-        const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
-        if (submitBtn) {
-          const originalText = submitBtn.textContent;
-          
-          submitBtn.textContent = 'Sending...';
-          submitBtn.disabled = true;
-          
-          setTimeout(() => {
-            alert('Thank you for your message! We\'ll get back to you soon.');
-            form.reset();
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-          }, 2000);
-        }
-      });
-    }
-
-    // Parallax effect for hero section
-    window.addEventListener('scroll', function() {
-      const scrolled = window.pageYOffset;
-      const hero = document.querySelector('.hero') as HTMLElement | null;
-      if (hero) {
-        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-      }
-    });
-
-    // Add typing effect to hero title
-    const titleBrand = document.querySelector('.title-brand');
-    if (titleBrand) {
-      const text = titleBrand.textContent;
-      titleBrand.textContent = '';
-      
-      let i = 0;
-      const typeWriter = () => {
-        if (i < text.length) {
-          titleBrand.textContent += text.charAt(i);
-          i++;
-          setTimeout(typeWriter, 100);
-        }
-      };
-      
-      setTimeout(typeWriter, 1000);
-    }
-  });
-</script>
