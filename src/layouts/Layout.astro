@@ -1,11 +1,99 @@
+---
+export interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = "Table of Three - Private Chef Services by Ryan Stringer", description = "Bringing 30 years of Michelin-starred experience into your home, your event, and your boardroom. From fine dining to intimate celebrations, we craft exceptional culinary experiences tailored to your vision." } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Table of Three</title>
+		
+		<!-- Primary Meta Tags -->
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://tableofthree.com/" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content="/logo.svg" />
+		
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content="https://tableofthree.com/" />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content="/logo.svg" />
+		
+		<!-- Additional Meta Tags -->
+		<meta name="keywords" content="private chef, catering, wedding catering, corporate events, fine dining, Ryan Stringer, Table of Three, Michelin-starred chef" />
+		<meta name="author" content="Ryan Stringer" />
+		<meta name="robots" content="index, follow" />
+		
+		<!-- Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+		
+		<!-- Structured Data -->
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			"name": "Table of Three",
+			"description": "Private chef services by Ryan Stringer, bringing 30 years of Michelin-starred experience to your events",
+			"url": "https://tableofthree.com",
+			"logo": "https://tableofthree.com/logo.svg",
+			"founder": {
+				"@type": "Person",
+				"name": "Ryan Stringer"
+			},
+			"serviceArea": "Greater Metropolitan Area",
+			"hasOfferCatalog": {
+				"@type": "OfferCatalog",
+				"name": "Catering Services",
+				"itemListElement": [
+					{
+						"@type": "Offer",
+						"itemOffered": {
+							"@type": "Service",
+							"name": "Wedding Catering"
+						}
+					},
+					{
+						"@type": "Offer",
+						"itemOffered": {
+							"@type": "Service",
+							"name": "Corporate Events"
+						}
+					},
+					{
+						"@type": "Offer",
+						"itemOffered": {
+							"@type": "Service",
+							"name": "Private Dining"
+						}
+					},
+					{
+						"@type": "Offer",
+						"itemOffered": {
+							"@type": "Service",
+							"name": "Special Events"
+						}
+					}
+				]
+			}
+		}
+		</script>
 	</head>
 	<body>
 		<slot />
