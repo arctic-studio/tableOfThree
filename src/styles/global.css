@@ -281,10 +281,7 @@ body {
   animation: float 3s ease-in-out infinite;
 }
 
-.chef-icon {
-  font-size: 8rem;
-  animation: pulse 2s ease-in-out infinite;
-}
+
 
 .scroll-indicator {
   position: absolute;

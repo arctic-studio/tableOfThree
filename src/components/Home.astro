@@ -2,12 +2,75 @@
 import NavigationBar from "./NavigationBar.astro";
 ---
 
-<div class="hero-image">
-	<div class="image-placeholder">
-		<div class="chef-icon">👨‍🍳</div>
-	</div>
+<div id="scroll-container" class="w-full h-2screen">
+	<div class="hero text-4xl">👨Hello</div>
 </div>
 
 <div class="scroll-indicator">
 	<div class="scroll-arrow"></div>
 </div>
+
+<script>
+	import { gsap } from "gsap";
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	document.addEventListener("DOMContentLoaded", () => {
+		const scrollIndicator = document.querySelector(".scroll-indicator");
+		const scrollContainer = document.querySelector("#scroll-container");
+		const hero = document.querySelector(".hero");
+
+		console.log("Elements found:", scrollContainer, hero);
+
+		// Scroll-based transformations
+		if (scrollContainer && hero) {
+			// Pin the hero container for 100vh of scrolling
+			ScrollTrigger.create({
+				trigger: scrollContainer,
+				start: "top top",
+				end: "+=100vh",
+				pin: true,
+				// markers: true // Uncomment to see trigger points
+			});
+
+			// Animate the hero text
+			// gsap.to(hero, {
+			// 	scale: 1,
+			// 	opacity: 0,
+			// 	top: "-100vh",
+			// 	duration: 1,
+			// 	ease: "none",
+			// 	scrollTrigger: {
+			// 		trigger: scrollContainer,
+			// 		start: "top top",
+			// 		end: "+=100vh",
+			// 		scrub: true,
+			// 		// markers: true
+			// 	},
+			// });
+
+			// Scroll indicator fade out
+			if (scrollIndicator) {
+				gsap.to(scrollIndicator, {
+					opacity: 0,
+					y: -30,
+					duration: 0.5,
+					ease: "none",
+					scrollTrigger: {
+						trigger: scrollContainer,
+						start: "top top",
+						end: "+=20vh",
+						scrub: true,
+					},
+				});
+			}
+		}
+	});
+</script>
+
+<style>
+	.h-2screen {
+		height: 200vh;
+	}
+</style>
