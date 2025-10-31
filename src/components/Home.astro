@@ -2,8 +2,12 @@
 import NavigationBar from "./NavigationBar.astro";
 ---
 
-<div id="scroll-container" class="w-full h-2screen">
-	<div class="hero text-4xl">👨Hello</div>
+<div id="scroll-container" class="container h-2screen">
+	<div class="hero flex justify-center items-center">
+		<div class="mask">
+			<img src="/images/chef/hero.jpg" id="hero-image" />
+		</div>
+	</div>
 </div>
 
 <div class="scroll-indicator">
@@ -20,19 +24,69 @@ import NavigationBar from "./NavigationBar.astro";
 		const scrollIndicator = document.querySelector(".scroll-indicator");
 		const scrollContainer = document.querySelector("#scroll-container");
 		const hero = document.querySelector(".hero");
+		const heroImage = document.querySelector("#hero-image");
+		const maskEl = document.querySelector(".mask");
+		const heroInnerImg = heroImage?.querySelector("img");
 
 		console.log("Elements found:", scrollContainer, hero);
 
 		// Scroll-based transformations
 		if (scrollContainer && hero) {
-			// Pin the hero container for 100vh of scrolling
+			// Pin the hero container until its bottom reaches the bottom of the viewport
 			ScrollTrigger.create({
 				trigger: scrollContainer,
 				start: "top top",
-				end: "+=100vh",
+				end: "bottom bottom",
 				pin: true,
 				// markers: true // Uncomment to see trigger points
 			});
+
+			// Keep hero-image circular and scale to cover the container by end
+			if (heroImage) {
+				// gsap.set(heroImage, {
+				// 	willChange: "transform",
+				// });
+
+				if (maskEl) {
+					const radiusForFullCover = () =>
+						Math.hypot(window.innerWidth, window.innerHeight) / 2;
+
+					const tl = gsap.timeline({
+						scrollTrigger: {
+							trigger: scrollContainer,
+							start: "top top",
+							end: "bottom bottom",
+							scrub: true,
+						},
+					});
+
+					// Initial state: small centered circle
+					tl.set(maskEl, {
+						clipPath: "circle(12.5vw at 50% 50%)",
+						WebkitClipPath: "circle(12.5vw at 50% 50%)",
+					});
+
+					// 0% -> 80%: grow the circle, remain centered
+					tl.to(
+						maskEl,
+						{
+							clipPath: () =>
+								`circle(${radiusForFullCover()}px at 50% 50%)`,
+							WebkitClipPath: () =>
+								`circle(${radiusForFullCover()}px at 50% 50%)`,
+							ease: "none",
+							duration: 0.8,
+						},
+						0,
+					);
+
+					// Recompute target radius on resize
+					window.addEventListener("resize", () => {
+						tl.invalidate();
+						ScrollTrigger.refresh();
+					});
+				}
+			}
 
 			// Animate the hero text
 			// gsap.to(hero, {
@@ -72,5 +126,21 @@ import NavigationBar from "./NavigationBar.astro";
 <style>
 	.h-2screen {
 		height: 200vh;
+	}
+
+	#hero-image {
+		width: 100vw;
+		height: 100vh;
+		object-fit: cover;
+		display: block;
+	}
+
+	.mask {
+		width: 100vw;
+		height: 100vh;
+		overflow: hidden;
+		clip-path: circle(12.5vw at 50% 50%);
+		-webkit-clip-path: circle(12.5vw at 50% 50%);
+		border: none; /* avoid rectangular border implying the mask is a rect */
 	}
 </style>
