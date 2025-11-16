@@ -1,146 +1,230 @@
----
-import NavigationBar from "./NavigationBar.astro";
----
-
-<div id="scroll-container" class="container h-2screen">
-	<div class="hero flex justify-center items-center">
-		<div class="mask">
-			<img src="/images/chef/hero.jpg" id="hero-image" />
+<div id="home" class="container h-2screen">
+	<div id="scroll-container" class="h-full">
+		<div class="hero flex justify-center items-center">
+			<div class="mask">
+				<img src="/images/chef/hero.jpg" id="hero-image" />
+			</div>
+			<div class="logo-container">
+				<div class="logo">
+					<img src="/logo-long.png" alt="Table of Three Logo" />
+				</div>
+			</div>
 		</div>
 	</div>
-</div>
 
-<div class="scroll-indicator">
-	<div class="scroll-arrow"></div>
-</div>
+	<div class="scroll-indicator">
+		<div class="scroll-arrow"></div>
+	</div>
 
-<script>
-	import { gsap } from "gsap";
-	import { ScrollTrigger } from "gsap/ScrollTrigger";
+	<script>
+		import { gsap } from "gsap";
+		import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-	gsap.registerPlugin(ScrollTrigger);
+		gsap.registerPlugin(ScrollTrigger);
 
-	document.addEventListener("DOMContentLoaded", () => {
-		const scrollIndicator = document.querySelector(".scroll-indicator");
-		const scrollContainer = document.querySelector("#scroll-container");
-		const hero = document.querySelector(".hero");
-		const heroImage = document.querySelector("#hero-image");
-		const maskEl = document.querySelector(".mask");
-		const heroInnerImg = heroImage?.querySelector("img");
+		document.addEventListener("DOMContentLoaded", () => {
+			const scrollIndicator = document.querySelector(".scroll-indicator");
+			const scrollContainer = document.querySelector("#scroll-container");
+			const hero = document.querySelector(".hero");
+			const heroImage = document.querySelector("#hero-image");
+			const maskEl = document.querySelector(".mask");
+			const heroInnerImg = heroImage?.querySelector("img");
+			const logoContainer = document.querySelector(".logo-container");
 
-		console.log("Elements found:", scrollContainer, hero);
+			// Scroll-based transformations
+			if (scrollContainer && hero) {
+				// Pin the hero container until its bottom reaches the bottom of the viewport
+				ScrollTrigger.create({
+					trigger: scrollContainer,
+					start: "top top",
+					end: "bottom bottom",
+					pin: true,
+					// markers: true // Uncomment to see trigger points
+				});
 
-		// Scroll-based transformations
-		if (scrollContainer && hero) {
-			// Pin the hero container until its bottom reaches the bottom of the viewport
-			ScrollTrigger.create({
-				trigger: scrollContainer,
-				start: "top top",
-				end: "bottom bottom",
-				pin: true,
-				// markers: true // Uncomment to see trigger points
-			});
+				// Keep hero-image circular and scale to cover the container by end
+				if (heroImage) {
+					// gsap.set(heroImage, {
+					// 	willChange: "transform",
+					// });
 
-			// Keep hero-image circular and scale to cover the container by end
-			if (heroImage) {
-				// gsap.set(heroImage, {
-				// 	willChange: "transform",
-				// });
+					if (maskEl) {
+						const radiusForFullCover = () =>
+							Math.hypot(window.innerWidth, window.innerHeight) /
+							2;
 
-				if (maskEl) {
-					const radiusForFullCover = () =>
-						Math.hypot(window.innerWidth, window.innerHeight) / 2;
+						const tl = gsap.timeline({
+							scrollTrigger: {
+								trigger: scrollContainer,
+								start: "top top",
+								end: "bottom bottom",
+								scrub: true,
+							},
+						});
 
-					const tl = gsap.timeline({
+						// Initial state: small centered circle (clip-path controls shape), set feathered mask vars
+						tl.set(maskEl, {
+							clipPath: "circle(0vw at 50% 50%)",
+							WebkitClipPath: "circle(0vw at 50% 50%)",
+						});
+
+						tl.set(maskEl, {
+							"--r": "0vw",
+						});
+
+						// Set initial logo opacity
+						if (logoContainer) {
+							tl.set(logoContainer, {
+								opacity: 1,
+							});
+						}
+
+						// 0% -> 80%: grow the circle, remain centered
+						tl.to(
+							maskEl,
+							{
+								clipPath: () =>
+									`circle(${radiusForFullCover()}px at 50% 50%)`,
+								WebkitClipPath: () =>
+									`circle(${radiusForFullCover()}px at 50% 50%)`,
+								ease: "none",
+								duration: 0.8,
+							},
+							0,
+						);
+
+						// Parallel: animate feathered mask radius bigger than viewport so it stops constraining near the end
+						tl.to(maskEl, {
+							"--r": () => `${radiusForFullCover() * 1.2}px`,
+							ease: "none",
+							scrollTrigger: {
+								trigger: scrollContainer,
+								start: "top top",
+								end: "bottom bottom",
+								scrub: true,
+							},
+						});
+
+						// Parallel: grow feather width from small to larger
+						tl.to(maskEl, {
+							"--feather": "80px",
+							ease: "none",
+							scrollTrigger: {
+								trigger: scrollContainer,
+								start: "top top",
+								end: "bottom bottom",
+								scrub: true,
+							},
+						});
+
+						// Fade out logo completely within first 30% of animation
+						if (logoContainer) {
+							tl.to(
+								logoContainer,
+								{
+									opacity: 0,
+									ease: "none",
+									duration: 0.3,
+								},
+								0,
+							);
+						}
+
+						// Recompute target radius on resize
+						window.addEventListener("resize", () => {
+							tl.invalidate();
+							ScrollTrigger.refresh();
+						});
+					}
+				}
+
+				// Scroll indicator fade out
+				if (scrollIndicator) {
+					gsap.to(scrollIndicator, {
+						opacity: 0,
+						y: -30,
+						duration: 0.5,
+						ease: "none",
 						scrollTrigger: {
 							trigger: scrollContainer,
 							start: "top top",
-							end: "bottom bottom",
+							end: "+=20vh",
 							scrub: true,
 						},
 					});
-
-					// Initial state: small centered circle
-					tl.set(maskEl, {
-						clipPath: "circle(12.5vw at 50% 50%)",
-						WebkitClipPath: "circle(12.5vw at 50% 50%)",
-					});
-
-					// 0% -> 80%: grow the circle, remain centered
-					tl.to(
-						maskEl,
-						{
-							clipPath: () =>
-								`circle(${radiusForFullCover()}px at 50% 50%)`,
-							WebkitClipPath: () =>
-								`circle(${radiusForFullCover()}px at 50% 50%)`,
-							ease: "none",
-							duration: 0.8,
-						},
-						0,
-					);
-
-					// Recompute target radius on resize
-					window.addEventListener("resize", () => {
-						tl.invalidate();
-						ScrollTrigger.refresh();
-					});
 				}
 			}
+		});
+	</script>
 
-			// Animate the hero text
-			// gsap.to(hero, {
-			// 	scale: 1,
-			// 	opacity: 0,
-			// 	top: "-100vh",
-			// 	duration: 1,
-			// 	ease: "none",
-			// 	scrollTrigger: {
-			// 		trigger: scrollContainer,
-			// 		start: "top top",
-			// 		end: "+=100vh",
-			// 		scrub: true,
-			// 		// markers: true
-			// 	},
-			// });
-
-			// Scroll indicator fade out
-			if (scrollIndicator) {
-				gsap.to(scrollIndicator, {
-					opacity: 0,
-					y: -30,
-					duration: 0.5,
-					ease: "none",
-					scrollTrigger: {
-						trigger: scrollContainer,
-						start: "top top",
-						end: "+=20vh",
-						scrub: true,
-					},
-				});
-			}
+	<style>
+		.h-2screen {
+			height: 200vh;
 		}
-	});
-</script>
 
-<style>
-	.h-2screen {
-		height: 200vh;
-	}
+		.hero {
+			position: relative;
+		}
 
-	#hero-image {
-		width: 100vw;
-		height: 100vh;
-		object-fit: cover;
-		display: block;
-	}
+		.hero::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background-image: url("/images/chef/hero.jpg");
+			background-size: cover;
+			background-position: center;
+			filter: grayscale(100%);
+			z-index: 0;
+		}
 
-	.mask {
-		width: 100vw;
-		height: 100vh;
-		overflow: hidden;
-		clip-path: circle(12.5vw at 50% 50%);
-		-webkit-clip-path: circle(12.5vw at 50% 50%);
-		border: none; /* avoid rectangular border implying the mask is a rect */
-	}
-</style>
+		#hero-image {
+			width: 100vw;
+			height: 100vh;
+			object-fit: cover;
+			display: block;
+		}
+
+		.mask {
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+			/* Feathered circular mask via CSS variables */
+			--r: 0vw; /* radius */
+			mask-image: radial-gradient(
+				circle at 50% 50%,
+				#000 calc(var(--r) - var(--feather)),
+				transparent var(--r)
+			);
+			mask-repeat: no-repeat;
+			-webkit-mask-image: radial-gradient(
+				circle at 50% 50%,
+				#000 calc(var(--r) - var(--feather)),
+				transparent var(--r)
+			);
+			-webkit-mask-repeat: no-repeat;
+			border: none; /* avoid rectangular border implying the mask is a rect */
+			position: relative;
+			z-index: 1;
+		}
+
+		.logo-container {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 2;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.logo {
+			width: 80%;
+			object-fit: contain;
+			margin-bottom: 40vh;
+		}
+	</style>
+</div>

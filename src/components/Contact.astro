@@ -1,5 +1,5 @@
-<section id="contact" class="contact">
-    <div class="container">
+<section id="contact" class="contact w-full">
+    <div class="container px-12">
         <div class="section-header">
             <h2 class="section-title">Let's Create Something Special</h2>
             <p class="section-subtitle">Ready to elevate your next event?</p>
@@ -7,24 +7,30 @@
         <div class="contact-content">
             <div class="contact-info">
                 <div class="contact-item">
-                    <div class="contact-icon">📧</div>
+                    <div class="contact-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
                     <div class="contact-details">
                         <h3>Email</h3>
                         <p>hello@tableofthree.com</p>
                     </div>
                 </div>
                 <div class="contact-item">
-                    <div class="contact-icon">📱</div>
+                    <div class="contact-icon">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
                     <div class="contact-details">
                         <h3>Phone</h3>
-                        <p>+1 (555) 123-4567</p>
+                        <p>07787 163522</p>
                     </div>
                 </div>
                 <div class="contact-item">
-                    <div class="contact-icon">📍</div>
+                    <div class="contact-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
                     <div class="contact-details">
                         <h3>Service Area</h3>
-                        <p>Greater Metropolitan Area</p>
+                        <p>Belfast and surrounding areas</p>
                     </div>
                 </div>
             </div>
@@ -67,7 +73,14 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <input type="date" id="event-date" name="event-date" />
+                        <input
+                            type="text"
+                            id="event-date"
+                            name="event-date"
+                            placeholder="dd/mm/yyyy"
+                            pattern="\d{2}/\d{2}/\d{4}"
+                            maxlength="10"
+                        />
                     </div>
                     <div class="form-group">
                         <textarea
@@ -84,3 +97,53 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const dateInput = document.getElementById(
+            "event-date",
+        ) as HTMLInputElement;
+
+        if (dateInput) {
+            dateInput.addEventListener("input", (e) => {
+                const target = e.target as HTMLInputElement;
+                if (!target) return;
+
+                let value = target.value.replace(/\D/g, ""); // Remove all non-digits
+
+                // Add slashes automatically
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + "/" + value.substring(2);
+                }
+                if (value.length >= 5) {
+                    value = value.substring(0, 5) + "/" + value.substring(5, 9);
+                }
+
+                target.value = value;
+            });
+
+            // Prevent invalid characters on keydown
+            dateInput.addEventListener("keydown", (e) => {
+                // Allow: backspace, delete, tab, escape, enter, and arrow keys
+                if (
+                    [8, 9, 27, 13, 46, 37, 38, 39, 40].indexOf(e.keyCode) !==
+                        -1 ||
+                    // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                    (e.keyCode === 65 && e.ctrlKey === true) ||
+                    (e.keyCode === 67 && e.ctrlKey === true) ||
+                    (e.keyCode === 86 && e.ctrlKey === true) ||
+                    (e.keyCode === 88 && e.ctrlKey === true)
+                ) {
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if (
+                    (e.shiftKey || e.keyCode < 48 || e.keyCode > 57) &&
+                    (e.keyCode < 96 || e.keyCode > 105)
+                ) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+</script>
