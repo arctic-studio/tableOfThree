@@ -916,6 +916,7 @@ section {
   }
 
   .service-card {
+    margin: 0px 16px;
     padding: 2rem 1.5rem;
   }
 
