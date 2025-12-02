@@ -3,9 +3,11 @@ import type { APIRoute } from "astro";
 // Mark this endpoint as server-rendered (not static)
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
     try {
         // Check if Mailjet API keys are configured
+        // In Cloudflare, env vars should be available through import.meta.env
+        // but they need to be set in Cloudflare dashboard
         const apiKey = import.meta.env.MJ_APIKEY_PUBLIC;
         const apiSecret = import.meta.env.MJ_APIKEY_PRIVATE;
 
@@ -63,9 +65,22 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         // Get recipient email from environment variable or use default
+        const runtime = (globalThis as any).process?.env || (globalThis as any).__env__;
         const recipientEmail =
-            import.meta.env.CONTACT_EMAIL || "tableofthreecatering@gmail.com";
-        const ccEmail = import.meta.env.CC_EMAIL || "jp@arctic.studio";
+            runtime?.CONTACT_EMAIL ||
+            import.meta.env.CONTACT_EMAIL ||
+            (locals as any)?.runtime?.env?.CONTACT_EMAIL ||
+            "tableofthreecatering@gmail.com";
+        const ccEmail = 
+            runtime?.CC_EMAIL ||
+            import.meta.env.CC_EMAIL ||
+            (locals as any)?.runtime?.env?.CC_EMAIL ||
+            "jp@arctic.studio";
+        const fromEmail =
+            runtime?.MJ_FROM_EMAIL ||
+            import.meta.env.MJ_FROM_EMAIL ||
+            (locals as any)?.runtime?.env?.MJ_FROM_EMAIL ||
+            "noreply@tableofthree.com";
         // Format the email content
         const htmlContent = `
 			<h2>New Contact Form Submission</h2>
@@ -107,9 +122,7 @@ export const POST: APIRoute = async ({ request }) => {
                     Messages: [
                         {
                             From: {
-                                Email:
-                                    import.meta.env.MJ_FROM_EMAIL ||
-                                    "noreply@tableofthree.com",
+                                Email: fromEmail,
                                 Name: "Table of Three Contact Form",
                             },
                             To: [
