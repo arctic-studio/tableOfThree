@@ -48,7 +48,7 @@ export const POST: APIRoute = async ({ request }) => {
                 },
             );
         }
-        const { name, email, phone, service, "event-date": eventDate, message } =
+        const { name, email, phone, service, "event-date": eventDate, message, allergies } =
             data;
 
         // Validate required fields
@@ -76,6 +76,7 @@ export const POST: APIRoute = async ({ request }) => {
 			${eventDate ? `<p><strong>Event Date:</strong> ${eventDate}</p>` : ""}
 			<p><strong>Message:</strong></p>
 			<p>${message || "No message provided"}</p>
+			${allergies ? `<p><strong>Allergies/Dietary Requirements:</strong></p><p>${allergies}</p>` : ""}
 		`;
 
         const textContent = `
@@ -89,6 +90,8 @@ export const POST: APIRoute = async ({ request }) => {
 			
 			Message:
 			${message || "No message provided"}
+			
+			${allergies ? `Allergies/Dietary Requirements:\n${allergies}` : ""}
 		`;
 
         // Call Mailjet API directly
