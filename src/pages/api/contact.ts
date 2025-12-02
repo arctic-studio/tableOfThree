@@ -1,5 +1,8 @@
 import type { APIRoute } from "astro";
 
+// Mark this endpoint as server-rendered (not static)
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
     try {
         // Check if Mailjet API keys are configured
@@ -19,7 +22,32 @@ export const POST: APIRoute = async ({ request }) => {
             );
         }
 
-        const data = await request.json();
+        // Parse request body with error handling
+        let data;
+        try {
+            const body = await request.text();
+            if (!body) {
+                return new Response(
+                    JSON.stringify({ error: "Request body is empty" }),
+                    {
+                        status: 400,
+                        headers: { "Content-Type": "application/json" },
+                    },
+                );
+            }
+            data = JSON.parse(body);
+        } catch (parseError) {
+            return new Response(
+                JSON.stringify({
+                    error: "Invalid JSON in request body",
+                    details: parseError instanceof Error ? parseError.message : "Unknown error",
+                }),
+                {
+                    status: 400,
+                    headers: { "Content-Type": "application/json" },
+                },
+            );
+        }
         const { name, email, phone, service, "event-date": eventDate, message } =
             data;
 
@@ -36,8 +64,8 @@ export const POST: APIRoute = async ({ request }) => {
 
         // Get recipient email from environment variable or use default
         const recipientEmail =
-            import.meta.env.CONTACT_EMAIL || "hello@tableofthree.com";
-
+            import.meta.env.CONTACT_EMAIL || "tableofthreecatering@gmail.com";
+        const ccEmail = import.meta.env.CC_EMAIL || "jp@arctic.studio";
         // Format the email content
         const htmlContent = `
 			<h2>New Contact Form Submission</h2>
@@ -85,6 +113,12 @@ export const POST: APIRoute = async ({ request }) => {
                                 {
                                     Email: recipientEmail,
                                     Name: "Table of Three",
+                                },
+                            ],
+                            Bcc: [
+                                {
+                                    Email: ccEmail,
+                                    Name: "JP",
                                 },
                             ],
                             Subject: `New Contact Form Submission - ${service}`,
