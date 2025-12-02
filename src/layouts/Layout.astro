@@ -5,8 +5,8 @@ export interface Props {
 }
 
 const {
-	title = "Table of Three - Private Chef Services by Ryan Stringer",
-	description = "Bringing 30 years of Michelin-starred experience into your home, your event, and your boardroom. From fine dining to intimate celebrations, we craft exceptional culinary experiences tailored to your vision.",
+	title = "Table of Three | Private Chef Belfast | Private Dining & Catering Services",
+	description = "Table of Three offers premium private chef services in Belfast. Experience Michelin-starred cuisine in your home with our private dining and catering services. Book your private chef in Belfast today.",
 } = Astro.props;
 import "../styles/global.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -42,59 +42,84 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 		<!-- Additional Meta Tags -->
 		<meta
 			name="keywords"
-			content="private chef, catering, wedding catering, corporate events, fine dining, Ryan Stringer, Table of Three, Michelin-starred chef"
+			content="private chef belfast, private dining belfast, table of three, private chef services belfast, in-home chef belfast, personal chef belfast, private catering belfast, fine dining belfast, michelin chef belfast, wedding catering belfast, corporate catering belfast, Ryan Stringer"
 		/>
 		<meta name="author" content="Ryan Stringer" />
 		<meta name="robots" content="index, follow" />
+		<meta name="geo.region" content="GB-NIR" />
+		<meta name="geo.placename" content="Belfast" />
+		<meta name="geo.position" content="54.5973;-5.9301" />
+		<meta name="ICBM" content="54.5973, -5.9301" />
+		<link rel="canonical" href="https://tableofthree.com/" />
 
 		<!-- Structured Data -->
 		<script type="application/ld+json">
 			{
 				"@context": "https://schema.org",
-				"@type": "Organization",
+				"@type": "FoodEstablishment",
+				"@id": "https://tableofthree.com",
 				"name": "Table of Three",
-				"description": "Private chef services by Ryan Stringer, bringing 30 years of Michelin-starred experience to your events",
+				"alternateName": "Table of Three Private Chef Services",
+				"description": "Table of Three offers premium private chef services in Belfast. Experience Michelin-starred cuisine in your home with our private dining and catering services.",
 				"url": "https://tableofthree.com",
 				"logo": "https://tableofthree.com/logo.png",
+				"image": "https://tableofthree.com/logo.png",
+				"address": {
+					"@type": "PostalAddress",
+					"addressLocality": "Belfast",
+					"addressRegion": "Northern Ireland",
+					"addressCountry": "GB"
+				},
+				"areaServed": {
+					"@type": "City",
+					"name": "Belfast"
+				},
 				"founder": {
 					"@type": "Person",
-					"name": "Ryan Stringer"
+					"name": "Ryan Stringer",
+					"jobTitle": "Private Chef"
 				},
-				"serviceArea": "Greater Metropolitan Area",
+				"servesCuisine": "Fine Dining",
+				"priceRange": "$$$",
 				"hasOfferCatalog": {
 					"@type": "OfferCatalog",
-					"name": "Catering Services",
+					"name": "Private Chef Services Belfast",
 					"itemListElement": [
 						{
 							"@type": "Offer",
 							"itemOffered": {
 								"@type": "Service",
-								"name": "Wedding Catering"
+								"name": "Private Chef Belfast",
+								"description": "In-home private chef service in Belfast"
 							}
 						},
 						{
 							"@type": "Offer",
 							"itemOffered": {
 								"@type": "Service",
-								"name": "Corporate Events"
+								"name": "Private Dining Belfast",
+								"description": "Private dining experiences in your home in Belfast"
 							}
 						},
 						{
 							"@type": "Offer",
 							"itemOffered": {
 								"@type": "Service",
-								"name": "Private Dining"
+								"name": "Wedding Catering Belfast",
+								"description": "Bespoke wedding catering services in Belfast"
 							}
 						},
 						{
 							"@type": "Offer",
 							"itemOffered": {
 								"@type": "Service",
-								"name": "Special Events"
+								"name": "Corporate Catering Belfast",
+								"description": "High-end corporate catering for events in Belfast"
 							}
 						}
 					]
-				}
+				},
+				"sameAs": []
 			}
 		</script>
 	</head>
