@@ -12,10 +12,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
         const apiSecret = import.meta.env.MJ_APIKEY_PRIVATE;
 
         if (!apiKey || !apiSecret) {
+            console.error("Missing Mailjet API keys:", {
+                hasApiKey: !!apiKey,
+                hasApiSecret: !!apiSecret,
+                envKeys: Object.keys(import.meta.env).filter(key => key.includes("MJ") || key.includes("CONTACT") || key.includes("CC")),
+            });
             return new Response(
                 JSON.stringify({
                     error: "Email service not configured",
-                    details: "Mailjet API keys are missing. Please configure MJ_APIKEY_PUBLIC and MJ_APIKEY_PRIVATE environment variables.",
+                    details: "Mailjet API keys are missing. Please configure MJ_APIKEY_PUBLIC and MJ_APIKEY_PRIVATE environment variables in your Cloudflare dashboard.",
                 }),
                 {
                     status: 500,
@@ -65,22 +70,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
         }
 
         // Get recipient email from environment variable or use default
-        const runtime = (globalThis as any).process?.env || (globalThis as any).__env__;
         const recipientEmail =
-            runtime?.CONTACT_EMAIL ||
-            import.meta.env.CONTACT_EMAIL ||
-            (locals as any)?.runtime?.env?.CONTACT_EMAIL ||
-            "tableofthreecatering@gmail.com";
-        const ccEmail = 
-            runtime?.CC_EMAIL ||
-            import.meta.env.CC_EMAIL ||
-            (locals as any)?.runtime?.env?.CC_EMAIL ||
-            "jp@arctic.studio";
+            import.meta.env.CONTACT_EMAIL || "tableofthreecatering@gmail.com";
+        const ccEmail = import.meta.env.CC_EMAIL || "jp@arctic.studio";
         const fromEmail =
-            runtime?.MJ_FROM_EMAIL ||
-            import.meta.env.MJ_FROM_EMAIL ||
-            (locals as any)?.runtime?.env?.MJ_FROM_EMAIL ||
-            "noreply@tableofthree.com";
+            import.meta.env.MJ_FROM_EMAIL || "noreply@tableofthree.com";
         // Format the email content
         const htmlContent = `
 			<h2>New Contact Form Submission</h2>
@@ -110,13 +104,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		`;
 
         // Call Mailjet API directly
+        // Use btoa for base64 encoding (available in Cloudflare Workers, not Buffer)
+        const authString = `${apiKey}:${apiSecret}`;
+        const authHeader = `Basic ${btoa(authString)}`;
+
         const mailjetResponse = await fetch(
             "https://api.mailjet.com/v3.1/send",
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")}`,
+                    Authorization: authHeader,
                 },
                 body: JSON.stringify({
                     Messages: [
